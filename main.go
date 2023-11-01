@@ -6,6 +6,8 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+
+	"github.com/ahmedelsayed968/Compilers-Project/internal/Scanner"
 )
 
 //go:embed all:frontend/dist
@@ -27,6 +29,7 @@ func main() {
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
+			&(Scanner.Fsm),
 		},
 	})
 

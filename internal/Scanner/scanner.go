@@ -223,7 +223,7 @@ func (S *ScannerStruct) Transition(event Event, eventChar string) error {
 
 }
 
-func (S *ScannerStruct) Scan(inputString string) {
+func (S *ScannerStruct) Scan(inputString string) []Token{
 	// S.Input = inputString
 	S.Current = START
 	for i := S.Pointer; i < len(inputString); i++ {
@@ -295,4 +295,6 @@ func (S *ScannerStruct) Scan(inputString string) {
 			}
 		}
 	}
+
+	return S.TokenList
 }

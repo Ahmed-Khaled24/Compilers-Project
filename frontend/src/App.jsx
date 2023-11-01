@@ -3,9 +3,12 @@ import React, { useState } from "react";
 import Dropdown from "./components/Dropdown";
 import InputFile from "./components/InputFile";
 import OutputFile from "./components/OutputFile";
+import { Scan } from "../wailsjs/go/Scanner/ScannerStruct";
 
 function Input() {
     const [selection, setSelection] = useState(null);
+    const [result, setResult] = useState(null);
+    const [inputFile, setInputFile] = useState(null);
 
     const handleSelect = (option) => {
         setSelection(option);
@@ -13,29 +16,30 @@ function Input() {
 
     const options = [
         { label: "Scanner", value: "scanner" },
-        { label: "Praser", value: "praser" },
+        { label: "Parser", value: "parser" },
     ];
-    const [file, setFile] = useState("");
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
         reader.readAsText(file);
         reader.onload = () => {
-            setFile(reader.result);
+            setInputFile(reader.result);
         };
         reader.onerror = () => {
             console.log("file error", reader.error);
         };
     };
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Submitting file:", file);
-        // setFile('');
+        const result = await Scan(inputFile);
+        setResult(JSON.stringify(result, null, 4));
     };
+
     return (
         <form onSubmit={handleSubmit}>
-            <div className="flex py-4 justify-around w-full mb-4 border  rounded-lg bg-gray-800 bg-gray-800 border-gray-600">
+            <div className="flex py-4 justify-around w-full border  rounded-lg bg-gray-800 bg-gray-800 border-gray-600 h-screen">
                 <div className="w-4/6 px-4  rounded-t-lg bg-gray-800 pb-18">
                     <div className="flex items-center justify-center space-x-6 px-auto">
                         <div className="w-1/4">
@@ -63,8 +67,8 @@ function Input() {
                             </button>
                         </div>
                     </div>
-                    <InputFile file={file} />
-                    <OutputFile />
+                    <InputFile file={inputFile} change={setInputFile} />
+                    <OutputFile file={result} />
                 </div>
             </div>
         </form>
