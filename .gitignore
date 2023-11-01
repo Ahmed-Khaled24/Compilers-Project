@@ -1,2 +1,3 @@
-*fahmy
-*.txt
+build
+node_modules
+frontend/dist
