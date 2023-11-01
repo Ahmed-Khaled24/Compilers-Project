@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Frame",
+  "outputfilename": "Frame",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "youmnaMahmoudd",
+    "email": "104006222+youmnaMahmoudd@users.noreply.github.com"
+  }
+}
