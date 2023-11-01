@@ -1,5 +1,7 @@
 package Scanner
 
+import "strings"
+
 type BASETOKENTYPE int64
 type ComparsionToken int64
 type ArithmeticToken int64
@@ -147,7 +149,7 @@ func get_child_attribute(base_type BASETOKENTYPE, token_val string) string {
 	return UNKOWN
 }
 func handle_revserved_words(token_val string) string {
-	switch token_val {
+		switch token_val {
 	case "if":
 		return IF.String()
 	case "else":
@@ -218,6 +220,7 @@ type Token struct {
 //
 //	Object of from Token class
 func CreateToken(base_type BASETOKENTYPE, token_val string) *Token {
+	token_val = strings.TrimSpace(token_val)
 	token_type := get_child_attribute(base_type, token_val)
 	return &Token{TokenBaseType: base_type, TokenValue: token_val, TokenType: token_type}
 }
