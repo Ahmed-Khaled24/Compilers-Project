@@ -1,19 +1,47 @@
-# README
+# Project Structure
 
-## About
+This Go project is organized as follows:
 
-This is the official Wails React template.
+-   **bin/**: used for storing binary executables
+-   **cmd/**: store the entry points for your application
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+    -   **myapp/**:
+        -   `main.go`
 
-## Live Development
+-   **internal/**:is a directory where you can place packages that are specific to your project and not intended to be used by external projects.
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+    -   **Scanner/**:
+        -   `token.go`
+        -   `scanner.go`
+    -   **Parser/**:
+        -   `parser.go`
+        -   `node.go`
 
-## Building
+-   **pkg/**: is for packages that can be used by other projects.
+    -   **utils/**:
+        -   `retrieval.go`
+        -   `store.go`
+-   **tests/**: Contains test files
+-   **frontend/**: Contains code for the main application window
 
-To build a redistributable, production mode package, use `wails build`.
+-   **go.mod**: The Go module file for dependency management.
+
+## Getting Started
+
+To run the application, follow these steps:
+
+1. Clone the repository:
+
+    ```shell
+    git clone https://github.com/Ahmed-Khaled24/Compilers-Project.git
+
+    ```
+
+2. Navigate to the application folder:
+    ```shell
+    cd Compilers-Project/cmd/myapp
+    ```
+3. Run the application:
+    ```shell
+    go run main.go
+    ```
