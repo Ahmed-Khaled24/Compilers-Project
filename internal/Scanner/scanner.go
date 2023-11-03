@@ -225,6 +225,7 @@ func (S *ScannerStruct) Transition(event Event, eventChar string) error {
 
 func (S *ScannerStruct) Scan(inputString string) []Token{
 	// S.Input = inputString
+	inputString = strings.Join(strings.Split(inputString, ""), " ")
 	S.Current = START
 	for i := S.Pointer; i < len(inputString); i++ {
 		c := inputString[i]
