@@ -5,7 +5,7 @@ function Input({ file, change }) {
         <div>
             <label
                 htmlFor="input"
-                className="pt-10 block mb-2 text-lg font-medium text-gray-900 dark:text-white"
+                className="pt-10 block mb-2 text-lg font-medium text-gray-900 dark:text-white uppercase"
             >
                 Input
             </label>
