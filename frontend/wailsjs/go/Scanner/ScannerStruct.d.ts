@@ -4,4 +4,4 @@ import {Scanner} from '../models';
 
 export function Scan(arg1:string):Promise<Array<Scanner.Token>>;
 
-export function Transition(arg1:Scanner.Event,arg2:string):Promise<void>;
+export function Transition(arg1:Scanner.Event,arg2:string,arg3:any):Promise<void>;

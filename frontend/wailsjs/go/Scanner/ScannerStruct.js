@@ -6,6 +6,6 @@ export function Scan(arg1) {
   return window['go']['Scanner']['ScannerStruct']['Scan'](arg1);
 }
 
-export function Transition(arg1, arg2) {
-  return window['go']['Scanner']['ScannerStruct']['Transition'](arg1, arg2);
+export function Transition(arg1, arg2, arg3) {
+  return window['go']['Scanner']['ScannerStruct']['Transition'](arg1, arg2, arg3);
 }

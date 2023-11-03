@@ -159,7 +159,7 @@ func handle_revserved_words(token_val string) string {
 	case "end":
 		return END.String()
 	case "repeat":
-		return READ.String()
+		return REPEAT.String()
 	case "until":
 		return UNTIL.String()
 	case "read":
