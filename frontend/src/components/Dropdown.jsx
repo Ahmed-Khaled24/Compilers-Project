@@ -28,11 +28,11 @@ function Dropdown({ options, value, onChange }) {
     return (
         <div className="w-3/4 relative">
             <div
-                className="flex justify-between dark:text-white items-center cursor-pointer border rounded p-1.5 shadow w-full"
+                className="flex justify-between  text-white items-center cursor-pointer border rounded p-1.5 shadow w-full"
                 onClick={handleClick}
             >
                 {value?.label || "Select..."}
-                <GoChevronDown className="text-lg dark:text-white" />
+                <GoChevronDown className="text-lg  text-white" />
             </div>
             {isOpen && (
                 <div className="absolute top-full border rounded p-3 shadow bg-white w-full">

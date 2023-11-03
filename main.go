@@ -33,7 +33,7 @@ func main() {
 			&(Scanner.Fsm),
 		},
 		Windows: &windows.Options{
-			DisableWindowIcon: true,	
+			DisableWindowIcon: true,
 		},
 	})
 
