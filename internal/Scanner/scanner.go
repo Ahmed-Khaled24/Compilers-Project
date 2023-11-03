@@ -160,13 +160,11 @@ var Fsm = ScannerStruct{
 				Destination: DONE,
 				Callback: func(StringInput *string, CharAddition *string, TokenList *[]Token, idx *int) *Token {
 					var tokenKeyword BASETOKENTYPE
-					fmt.Println("Identifier here " + *StringInput)
 					if(isReservedWord(*StringInput)){
 						tokenKeyword = RESERVED
 					}else {
 						tokenKeyword = IDENTIFIER
 					}
-					fmt.Println(tokenKeyword)
 					newToken := CreateToken(tokenKeyword, *StringInput)
 					*TokenList = append(*TokenList, *newToken)
 					*StringInput = ""
@@ -236,11 +234,8 @@ var Fsm = ScannerStruct{
 
 func (S *ScannerStruct) Transition(event Event, eventChar string, idx *int) error {
 	action := S.StateMap[S.Current][event]
-	// fmt.Println("Action Destination is "+action.Destination)
-	// fmt.Println("Current Input is " +S.Input)
 	if fmt.Sprint(action) == fmt.Sprint(Action{}) {
 		action = S.StateMap[S.Current]["Other"]
-		// fmt.Println("Going from "+S.Current+" to "+action.Destination)
 	}
 	S.Current = action.Destination
 	action.Callback(&S.Input, &eventChar, &S.TokenList, idx)
@@ -253,16 +248,15 @@ func (S *ScannerStruct) Transition(event Event, eventChar string, idx *int) erro
 
 }
 
-func (S *ScannerStruct) Scan(inputString string) {
+func (S* ScannerStruct) getTokenList() []Token {
+	returnedList:= S.TokenList
+	S.TokenList = []Token{}
+	return returnedList
+}
+func (S *ScannerStruct) Scan(inputString string) []Token {
 	// S.Input = inputString
 	S.Current = START
 	for i := S.Pointer; i < len(inputString); i++ {
-		fmt.Println("------------------------------------")
-		fmt.Println("Index is " + strconv.Itoa(i))
-		fmt.Println("------------------------------------")
-
-
-
 		c := inputString[i]
 		
 		// fmt.Println("Scanning" + string(c))
@@ -309,13 +303,11 @@ func (S *ScannerStruct) Scan(inputString string) {
 		switch S.Current {
 			case IN_ID:{
 				var tokenKeyword BASETOKENTYPE
-				fmt.Println("Identifier here " + S.Input)
 				if(isReservedWord(S.Input)){
 					tokenKeyword = RESERVED
 				}else {
 					tokenKeyword = IDENTIFIER
 				}
-				fmt.Println(tokenKeyword)
 				newToken := CreateToken(tokenKeyword, S.Input)
 				S.TokenList = append(S.TokenList, *newToken)
 			}
@@ -335,4 +327,5 @@ func (S *ScannerStruct) Scan(inputString string) {
 			}
 		}
 	}
+	return S.getTokenList();
 }
