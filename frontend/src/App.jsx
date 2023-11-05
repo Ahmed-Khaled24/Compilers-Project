@@ -37,11 +37,12 @@ function Input() {
             fileInput.value = "";
         }
         setInputFile("");
-       // setScannerResult("No results yet.");
+        // setScannerResult("No results yet.");
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let analysis = await Scan(inputFile);
+        let filtered = inputFile.replaceAll(/[\n\r\t]/g, " ");
+        let analysis = await Scan(filtered);
         analysis = analysis.map((token) => {
             let { TokenBaseType, ...rest } = token;
             return rest;
@@ -53,15 +54,15 @@ function Input() {
             setScannerResult(formattedOutput);
         }
     };
+
     function SaveOutput(scannerResult) {
-        const blob = new Blob([scannerResult], { type: 'text/plain' });
+        const blob = new Blob([scannerResult], { type: "text/plain" });
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = 'Result.txt';
+        const link = document.createElement("a");
+        link.download = "Result.txt";
         link.href = url;
         link.click();
     }
-
 
     return (
         <form onSubmit={handleSubmit}>
@@ -99,12 +100,14 @@ function Input() {
                     <div className="   py-3 flex flex-row-reverse">
                         <button
                             class="w-1/5 text-white bg-red-600 hover:bg-red-700  font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
-                            onClick={clear}>
+                            onClick={clear}
+                        >
                             Clear
                         </button>
                         <button
                             class="w-1/5 text-white bg-sky-800 hover:bg-blue-900  font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
-                            onClick={() => SaveOutput(scannerResult)}>
+                            onClick={() => SaveOutput(scannerResult)}
+                        >
                             Save
                         </button>
                     </div>
