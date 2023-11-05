@@ -207,10 +207,10 @@ var Fsm = ScannerStruct{
 			"Other": Action{
 				Destination: DONE,
 				Callback: func(StringInput *string, CharAddition *string, TokenList *[]Token, idx *int) *Token {
-					*StringInput += *CharAddition
 					newToken := CreateToken(SPECIALSYMBOL, *StringInput)
 					*TokenList = append(*TokenList, *newToken)
 					*StringInput = ""
+					// *StringInput += *CharAddition
 					*idx -= 1;
 					return newToken
 				},
@@ -220,10 +220,10 @@ var Fsm = ScannerStruct{
 			"Other": Action{
 				Destination: DONE,
 				Callback: func(StringInput *string, CharAddition *string, TokenList *[]Token, idx *int) *Token {
-					*StringInput += *CharAddition
 					newToken := CreateToken(ERROR, *StringInput)
 					*TokenList = append(*TokenList, *newToken)
 					*StringInput = ""
+					// *StringInput += *CharAddition
 					*idx -= 1;
 					return newToken
 				},
@@ -286,7 +286,7 @@ func (S *ScannerStruct) Scan(inputString string) []Token {
 		} else if isSpecialSymbols(string(c)) {
 			// fmt.Println("SpecialSymbol" + string(c))
 			S.Transition("SpecialSymbol", string(c), &i)
-		} else if (c == '\n' || c == '\t' || c == '\r') {
+		} else if (string(c) == "\\n" || string(c) == "\\t" || string(c) == "\\r") {
 			// fmt.Println("SemiColon" + string(c))
 		}else {
 			// fmt.Println("Other" + string(c))
