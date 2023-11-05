@@ -251,6 +251,7 @@ func (S *ScannerStruct) Transition(event Event, eventChar string, idx *int) erro
 func (S* ScannerStruct) getTokenList() []Token {
 	returnedList:= S.TokenList
 	S.TokenList = []Token{}
+	S.Input = ""
 	return returnedList
 }
 func (S *ScannerStruct) Scan(inputString string) []Token {
