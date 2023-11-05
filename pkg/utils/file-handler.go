@@ -2,11 +2,16 @@ package utils
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 func ReadFile(Path string) (string, error) {
 	file, err := os.ReadFile(Path)
-	return string(file), err
+	stringFile := string(file)
+	stringFile = strings.ReplaceAll(stringFile, "\n", "")
+	stringFile = strings.ReplaceAll(stringFile, "\t", "")
+	stringFile = strings.ReplaceAll(stringFile, "\r", "")
+	return strings.Replace(string(file), "\r\n", "\n", -1), err
 }
 
 func SaveFile(destion_path string, data string) bool {
