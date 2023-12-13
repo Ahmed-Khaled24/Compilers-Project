@@ -11,7 +11,7 @@ import (
 	"github.com/ahmedelsayed968/Compilers-Project/internal/Scanner"
 )
 
-//go:embed all:frontend/dist
+// go:embed all:frontend/dist
 var assets embed.FS
 
 func main() {
