@@ -1,130 +1,191 @@
 package Parser
 
-func (p *Parser) Entry(token *Node) Node {
-	return p.StmtSequence(token)
+import "github.com/ahmedelsayed968/Compilers-Project/internal/Scanner"
+
+// define the parser of the tiny language
+func (p *Parser) Program() *Node {
+	node := *p.StmtSequence()
+	return &node
 }
 
-func (p *Parser) StmtSequence(token *Node) Node {
-	node := NewNode("StmtSequence", "", nil)
-	node.AddChild(p.Statement(token))
-	for p.CurrentTokenIndex < len(p.CurrentToken.Children) && p.CurrentToken.Children[p.CurrentTokenIndex].NodeValue == ";" {
-		p.CurrentTokenIndex++
-		node.AddChild(p.Statement(&p.CurrentToken.Children[p.CurrentTokenIndex]))
+func (p *Parser) StmtSequence() *Node {
+	node := p.Statement()
+	entry := node
+
+	for p.CurrentToken().TokenType == "SEMICOLON" {
+		p.Match("SEMICOLON")
+		node.Next = p.Statement()
+		node = node.Next
 	}
-	return node
+	return entry
 }
 
-func (p *Parser) Statement(token *Node) Node {
-	switch token.NodeValue {
-	case "if":
-		return p.IfStmt(token)
-	case "repeat":
-		return p.RepeatStmt(token)
-	case "identifier":
-		return p.AssignStmt(token)
-	case "read":
-		return p.ReadStmt(token)
-	case "write":
-		return p.WriteStmt(token)
-	default:
-		panic("Unexpected token")
+func (p *Parser) Statement() *Node {
+	node := NewNode("Statement", "Statement")
+	switch p.CurrentToken().TokenType {
+	case "IF":
+		node = *p.IfStatement()
+	case "REPEAT":
+		node = *p.RepeatStatement()
+	case "IDENTIFIER":
+		node = *p.AssignStatement()
+	case "READ":
+		node = *p.ReadStatement()
+	case "WRITE":
+		node = *p.WriteStatement()
 	}
+	return &node
 }
 
-func (p *Parser) IfStmt(token *Node) Node {
-	node := NewNode("IfStmt", "", nil)
-	node.AddChild(*token)
-	p.CurrentTokenIndex++
-	node.AddChild(p.Exp(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-	p.CurrentTokenIndex++
-	node.AddChild(p.StmtSequence(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-	if p.CurrentToken.Children[p.CurrentTokenIndex].NodeValue == "else" {
-		p.CurrentTokenIndex++
-		node.AddChild(p.StmtSequence(&p.CurrentToken.Children[p.CurrentTokenIndex]))
+func (p *Parser) IfStatement() *Node {
+	node := NewNode("if", "if")
+	p.Match("IF")
+	node.AddChild(p.Exp())
+	p.Match("THEN")
+	node.AddChild(p.StmtSequence())
+	if p.CurrentToken().TokenType == "ELSE" {
+		node.AddChild(p.Match("ELSE"))
+		p.StmtSequence()
 	}
-	p.CurrentTokenIndex++
-	return node
+	p.Match("END")
+	return &node
 }
 
-func (p *Parser) RepeatStmt(token *Node) Node {
-	node := NewNode("RepeatStmt", "", nil)
-	node.AddChild(*token)
-	p.CurrentTokenIndex++
-	node.AddChild(p.StmtSequence(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-	p.CurrentTokenIndex++
-	node.AddChild(p.Exp(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-	p.CurrentTokenIndex++
-	return node
+func (p *Parser) RepeatStatement() *Node {
+	node := NewNode("RepeatStatement", "repeat")
+	p.Match("REPEAT")
+	node.AddChild(p.StmtSequence())
+	p.Match("UNTIL")
+	node.AddChild(p.Exp())
+	return &node
 }
 
-func (p *Parser) AssignStmt(token *Node) Node {
-	node := NewNode("AssignStmt", "", nil)
-	node.AddChild(*token)
-	p.CurrentTokenIndex++
-	node.AddChild(p.Exp(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-	p.CurrentTokenIndex++
-	return node
+func (p *Parser) AssignStatement() *Node {
+	node := NewNode("assign", "assign")
+	node.NodeValue = p.Match("IDENTIFIER").NodeValue
+	p.Match("ASSIGNMENT")
+	node.AddChild(p.Exp())
+	return &node
 }
 
-func (p *Parser) ReadStmt(token *Node) Node {
-	node := NewNode("ReadStmt", "", nil)
-	node.AddChild(*token)
-	p.CurrentTokenIndex++
-	return node
+func (p *Parser) ReadStatement() *Node {
+	node := NewNode("read", "read")
+	p.Match("READ")
+	node.NodeValue = p.CurrentToken().TokenValue
+	p.Match("IDENTIFIER")
+	return &node
 }
 
-func (p *Parser) WriteStmt(token *Node) Node {
-	node := NewNode("WriteStmt", "", nil)
-	node.AddChild(*token)
-	p.CurrentTokenIndex++
-	node.AddChild(p.Exp(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-	p.CurrentTokenIndex++
-	return node
+func (p *Parser) WriteStatement() *Node {
+	node := NewNode("write", "write")
+	p.Match("WRITE")
+	node.NodeValue = p.CurrentToken().TokenValue
+	p.Exp()
+	return &node
 }
 
-func (p *Parser) Exp(token *Node) Node {
-	node := NewNode("Exp", "", nil)
-	node.AddChild(p.SimpleExp(token))
-	for p.CurrentTokenIndex < len(p.CurrentToken.Children) && p.CurrentToken.Children[p.CurrentTokenIndex].NodeValue == "<" {
-		node.AddChild(*token)
-		p.CurrentTokenIndex++
-		node.AddChild(p.SimpleExp(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-	}
-	return node
-}
-
-func (p *Parser) SimpleExp(token *Node) Node {
-	node := NewNode("SimpleExp", "", nil)
-	node.AddChild(p.Term(token))
-	for p.CurrentTokenIndex < len(p.CurrentToken.Children) && (p.CurrentToken.Children[p.CurrentTokenIndex].NodeValue == "+" || p.CurrentToken.Children[p.CurrentTokenIndex].NodeValue == "-") {
-		node.AddChild(*token)
-		p.CurrentTokenIndex++
-		node.AddChild(p.Term(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-	}
-	return node
-}
-
-func (p *Parser) Term(token *Node) Node {
-	node := NewNode("Term", "", nil)
-	node.AddChild(p.Factor(token))
-	for p.CurrentTokenIndex < len(p.CurrentToken.Children) && (p.CurrentToken.Children[p.CurrentTokenIndex].NodeValue == "*" || p.CurrentToken.Children[p.CurrentTokenIndex].NodeValue == "/") {
-		node.AddChild(*token)
-		p.CurrentTokenIndex++
-		node.AddChild(p.Factor(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-	}
-	return node
-}
-
-func (p *Parser) Factor(token *Node) Node {
-	node := NewNode("Factor", "", nil)
-	if p.CurrentToken.Children[p.CurrentTokenIndex].NodeValue == "(" {
-		node.AddChild(*token)
-		p.CurrentTokenIndex++
-		node.AddChild(p.Exp(&p.CurrentToken.Children[p.CurrentTokenIndex]))
-		p.CurrentTokenIndex++
+func (p *Parser) Exp() *Node {
+	node := NewNode("Exp", "Exp")
+	child := *p.SimpleExp()
+	if p.CurrentToken().TokenType == "LESSTHAN" || p.CurrentToken().TokenType == "EQUAL" {
+		node = *p.ComparisonOp()
+		node.AddChild(&child)
+		node.AddChild(p.SimpleExp())
 	} else {
-		node.AddChild(*token)
-		p.CurrentTokenIndex++
+		node = child
 	}
-	return node
+
+	return &node
+}
+
+func (p *Parser) ComparisonOp() *Node {
+	node := NewNode("ComparisonOp", "ComparisonOp")
+	switch p.CurrentToken().TokenType {
+	case "LESSTHAN":
+		node.NodeValue = "<"
+		p.Match("LESSTHAN")
+	case "EQUAL":
+		node.NodeValue = "="
+		p.Match("EQUAL")
+	}
+	return &node
+}
+
+func (p *Parser) SimpleExp() *Node {
+	factor := *p.Term()
+	node := factor
+	for p.CurrentToken().TokenType == "PLUS" || p.CurrentToken().TokenType == "MINUS" {
+		node = *p.AddOp()
+		node.AddChild(&factor)
+		node.AddChild(p.Term())
+	}
+	return &node
+}
+
+func (p *Parser) AddOp() *Node {
+	node := NewNode("AddOp", "AddOp")
+	switch p.CurrentToken().TokenType {
+	case "PLUS":
+		node.NodeValue = "+"
+		p.Match("PLUS")
+	case "MINUS":
+		node.NodeValue = "-"
+		p.Match("MINUS")
+	}
+	return &node
+}
+
+func (p *Parser) Term() *Node {
+	factor := *p.Factor()
+	node := factor
+	for p.CurrentToken().TokenType == "MULT" || p.CurrentToken().TokenType == "DIV" {
+		node = *p.MultOp()
+		node.AddChild(&factor)
+		node.AddChild(p.Factor())
+	}
+	return &node
+}
+
+func (p *Parser) MultOp() *Node {
+	node := NewNode("MultOp", "MultOp")
+	switch p.CurrentToken().TokenType {
+	case "MULT":
+		node.NodeValue = "*"
+		p.Match("MULT")
+	case "DIV":
+		node.NodeValue = "/"
+		p.Match("DIV")
+	}
+	return &node
+}
+
+func (p *Parser) Factor() *Node {
+	node := NewNode("Factor", "Factor")
+	switch p.CurrentToken().TokenType {
+	case "OPENBRACKET":
+		node.AddChild(p.Match("OPENBRACKET"))
+		node.AddChild(p.Exp())
+		node.AddChild(p.Match("CLOSEDBRACKET"))
+	case "NUMBER":
+		node = *p.Match("NUMBER")
+	case "IDENTIFIER":
+		node = *p.Match("IDENTIFIER")
+	}
+	return &node
+}
+
+func (p *Parser) Match(tokenType string) *Node {
+	currentToken := p.CurrentToken()
+	node := NewNode(tokenType, currentToken.TokenValue)
+	if currentToken.TokenType == tokenType {
+		p.Pointer++
+	}
+	return &node
+}
+
+func (p *Parser) CurrentToken() Scanner.Token {
+	if p.Pointer >= len(p.TokenList) {
+		return Scanner.Token{}
+	}
+	return p.TokenList[p.Pointer]
 }
