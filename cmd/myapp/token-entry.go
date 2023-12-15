@@ -27,9 +27,17 @@ func TestParser() *Parser.Node {
 		}
 		x = append(x, test[i])
 	}
+	// print tokens without errors (for now only)
 	fmt.Println(x)
+
 	parser := Parser.NewParser(x)
-	return parser.Parse()
+	parsedTokens := parser.Parse()
+
+	// fmt.Println(parsedTokens.)
+	// for x=parser.TreeEntry, x!=nil; x=x.Next  {
+
+	// }
+	return parsedTokens
 }
 
 func main() {
