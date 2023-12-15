@@ -6,7 +6,7 @@ import OutputFile from "./components/OutputFile";
 import { Scan } from "../wailsjs/go/Scanner/ScannerStruct";
 
 function Input() {
-    const [selection, setSelection] = useState("");
+    const [selection, setSelection] = useState("scanner");
     const [scannerResult, setScannerResult] = useState("No results yet.");
     const [inputFile, setInputFile] = useState("");
 
@@ -52,6 +52,7 @@ function Input() {
         } else {
             const formattedOutput = JSON.stringify(analysis, null, 4);
             setScannerResult(formattedOutput);
+            console.log(formattedOutput);
         }
     };
 
@@ -76,7 +77,6 @@ function Input() {
                                 onChange={handleSelect}
                             />
                         </div>
-
                         <div className=" h-full w-2/5">
                             <input
                                 id="file-input"
@@ -96,7 +96,7 @@ function Input() {
                         </div>
                     </div>
                     <InputFile file={inputFile} change={setInputFile} />
-                    <OutputFile file={scannerResult} />
+                    <OutputFile file={scannerResult} type={selection} />
                     <div className="   py-3 flex flex-row-reverse">
                         <button
                             class="w-1/5 text-white bg-red-600 hover:bg-red-700  font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
