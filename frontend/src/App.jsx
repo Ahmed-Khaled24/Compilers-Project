@@ -4,9 +4,13 @@ import Dropdown from "./components/Dropdown";
 import InputFile from "./components/InputFile";
 import OutputFile from "./components/OutputFile";
 import { Scan } from "../wailsjs/go/Scanner/ScannerStruct";
+import { Parse } from "../wailsjs/go/Parser/Parser";
 
 function Input() {
-    const [selection, setSelection] = useState(  { label: "Scanner", value: "scanner" });
+    const [selection, setSelection] = useState({
+        label: "Scanner",
+        value: "scanner",
+    });
     const [scannerResult, setScannerResult] = useState("No results yet.");
     const [inputFile, setInputFile] = useState("");
 
@@ -43,6 +47,7 @@ function Input() {
         e.preventDefault();
         let filtered = inputFile.replaceAll(/[\n\r\t]/g, " ");
         let analysis = await Scan(filtered);
+        const parserResult = await Parse(filtered);
         analysis = analysis.map((token) => {
             let { TokenBaseType, ...rest } = token;
             return rest;
@@ -50,9 +55,9 @@ function Input() {
         if (analysis.length === 0) {
             setScannerResult("No results yet.");
         } else {
+            console.log(parserResult);
             const formattedOutput = JSON.stringify(analysis, null, 4);
             setScannerResult(formattedOutput);
-            console.log(formattedOutput);
         }
     };
 
@@ -78,7 +83,6 @@ function Input() {
         { data: { source: "repeat", target: "op" } },
         { data: { source: "read", target: "if" } },
         { data: { source: "read", target: "id" } },
-
     ];
     return (
         <form onSubmit={handleSubmit}>
@@ -110,7 +114,14 @@ function Input() {
                         </div>
                     </div>
                     <InputFile file={inputFile} change={setInputFile} />
-                    <OutputFile file={selection.value === 'scanner' ? scannerResult : basicElements} type={selection} />
+                    <OutputFile
+                        file={
+                            selection.value === "scanner"
+                                ? scannerResult
+                                : basicElements
+                        }
+                        type={selection}
+                    />
                     <div className="   py-3 flex flex-row-reverse">
                         <button
                             class="w-1/5 text-white bg-red-600 hover:bg-red-700  font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
