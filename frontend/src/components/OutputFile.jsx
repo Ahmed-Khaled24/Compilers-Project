@@ -16,7 +16,8 @@ function Output({ file, type }) {
                       <Chart elements={file} />
                     </div>
                   ) : (
-                    <div></div>
+                    <div className="h-[28rem] rounded-lg bg-gray-50 rounded-lg border border-gray-300  bg-gray-700  border-gray-600 w-full">
+                    </div>
                   )
             ) : (
                 <div className="py-2.5">
