@@ -11,9 +11,13 @@ function Output({ file, type }) {
                 output
             </label>
             {type.value === "parser" ? (
-                <div className="h-[20rem] rounded-lg bg-gray-50 rounded-lg border border-gray-300  bg-gray-700  border-gray-600 ">
-                    <Chart elements={file} />
-                </div>
+                  file ? (
+                    <div className="h-[28rem] rounded-lg bg-gray-50 rounded-lg border border-gray-300  bg-gray-700  border-gray-600 w-full">
+                      <Chart elements={file} />
+                    </div>
+                  ) : (
+                    <div></div>
+                  )
             ) : (
                 <div className="py-2.5">
                     <textarea

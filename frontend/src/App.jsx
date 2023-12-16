@@ -5,7 +5,6 @@ import InputFile from "./components/InputFile";
 import OutputFile from "./components/OutputFile";
 import { Scan } from "../wailsjs/go/Scanner/ScannerStruct";
 import { Parse } from "../wailsjs/go/Parser/Parser";
-
 function Input() {
     const [selection, setSelection] = useState({
         label: "Scanner",
@@ -13,6 +12,7 @@ function Input() {
     });
     const [scannerResult, setScannerResult] = useState("No results yet.");
     const [inputFile, setInputFile] = useState("");
+    const [parserResult, setParserResult] = useState("");
 
     const options = [
         { label: "Scanner", value: "scanner" },
@@ -41,13 +41,14 @@ function Input() {
             fileInput.value = "";
         }
         setInputFile("");
+        setParserResult("");
         // setScannerResult("No results yet.");
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
         let filtered = inputFile.replaceAll(/[\n\r\t]/g, " ");
         let analysis = await Scan(filtered);
-        const parserResult = await Parse(filtered);
+        const Result = await Parse(filtered);
         analysis = analysis.map((token) => {
             let { TokenBaseType, ...rest } = token;
             return rest;
@@ -55,7 +56,8 @@ function Input() {
         if (analysis.length === 0) {
             setScannerResult("No results yet.");
         } else {
-            console.log(parserResult);
+            console.log(Result);
+            setParserResult(renderNode(Result))
             const formattedOutput = JSON.stringify(analysis, null, 4);
             setScannerResult(formattedOutput);
         }
@@ -69,25 +71,56 @@ function Input() {
         link.href = url;
         link.click();
     }
-    //Replace it with the output from backend
-    const basicElements = [
-        { data: { id: "read", label: "read" } },
-        { data: { id: "if", label: "if" } },
-        { data: { id: "op", label: "op" } },
-        { data: { id: "assign", label: "assign" } },
-        { data: { id: "const", label: "const" } },
-        { data: { id: "id", label: "id" } },
-        { data: { id: "repeat", label: "repeat" } },
-        { data: { source: "assign", target: "repeat" } },
-        { data: { source: "assign", target: "const" } },
-        { data: { source: "repeat", target: "op" } },
-        { data: { source: "read", target: "if" } },
-        { data: { source: "read", target: "id" } },
-    ];
+    let nodeId = 0;
+
+    function renderNode(node) {
+        const currentId = `${node.NodeType}_${nodeId++}`;
+        const x = [
+            {
+                data: {
+                    id: currentId,
+                    label: node.NodeType + '  ( ' + node.NodeValue + ' )',
+                },
+                position: { x: 0, y: 0 }
+            }
+        ];
+
+        if (node.Next) {
+            const nextNodes = renderNode(node.Next);
+            nextNodes[0].position.x = 90,
+                x.push(...(nextNodes));
+            x.push({
+                data: {
+                    source: currentId,
+                    target: nextNodes[0].data.id,
+                    label: 'Next',
+                },
+            });
+        }
+
+        if (node.Children) {
+            node.Children.map((child) => {
+                const childNodes = renderNode(child);
+                childNodes[0].position.x = 90,
+                    childNodes[0].position.y = 90,
+                    x.push(...(childNodes));
+                x.push({
+                    data: {
+                        source: currentId,
+                        target: childNodes[0].data.id,
+                        label: 'Child',
+
+                    },
+                });
+            });
+        }
+        return x;
+    }
+
     return (
         <form onSubmit={handleSubmit}>
             <div className="flex justify-around py-8 w-full border bg-gray-800 border-gray-600 min-h-screen">
-                <div className="w-4/6 px-4  rounded-t-lg bg-gray-800 pb-18">
+                <div className="w-5/6 px-4  rounded-t-lg bg-gray-800 pb-18">
                     <div className="flex items-center justify-center space-x-6 px-auto">
                         <div className="w-1/4">
                             <Dropdown
@@ -118,7 +151,7 @@ function Input() {
                         file={
                             selection.value === "scanner"
                                 ? scannerResult
-                                : basicElements
+                                : parserResult
                         }
                         type={selection}
                     />
