@@ -6,7 +6,7 @@ import OutputFile from "./components/OutputFile";
 import { Scan } from "../wailsjs/go/Scanner/ScannerStruct";
 
 function Input() {
-    const [selection, setSelection] = useState("scanner");
+    const [selection, setSelection] = useState(  { label: "Scanner", value: "scanner" });
     const [scannerResult, setScannerResult] = useState("No results yet.");
     const [inputFile, setInputFile] = useState("");
 
@@ -64,7 +64,22 @@ function Input() {
         link.href = url;
         link.click();
     }
+    //Replace it with the output from backend
+    const basicElements = [
+        { data: { id: "read", label: "read" } },
+        { data: { id: "if", label: "if" } },
+        { data: { id: "op", label: "op" } },
+        { data: { id: "assign", label: "assign" } },
+        { data: { id: "const", label: "const" } },
+        { data: { id: "id", label: "id" } },
+        { data: { id: "repeat", label: "repeat" } },
+        { data: { source: "assign", target: "repeat" } },
+        { data: { source: "assign", target: "const" } },
+        { data: { source: "repeat", target: "op" } },
+        { data: { source: "read", target: "if" } },
+        { data: { source: "read", target: "id" } },
 
+    ];
     return (
         <form onSubmit={handleSubmit}>
             <div className="flex justify-around py-8 w-full border bg-gray-800 border-gray-600 min-h-screen">
@@ -85,7 +100,6 @@ function Input() {
                                 onChange={handleFileChange}
                             />
                         </div>
-
                         <div className=" h-full w-1/6 pt-2">
                             <button
                                 type="submit"
@@ -96,7 +110,7 @@ function Input() {
                         </div>
                     </div>
                     <InputFile file={inputFile} change={setInputFile} />
-                    <OutputFile file={scannerResult} type={selection} />
+                    <OutputFile file={selection.value === 'scanner' ? scannerResult : basicElements} type={selection} />
                     <div className="   py-3 flex flex-row-reverse">
                         <button
                             class="w-1/5 text-white bg-red-600 hover:bg-red-700  font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"

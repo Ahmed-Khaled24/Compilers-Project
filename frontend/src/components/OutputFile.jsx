@@ -1,26 +1,5 @@
 import React from "react";
 import { Chart } from "./chart";
-const basicElements = [
-    { data: { id: "read", label: "read" } },
-    { data: { id: "if", label: "if" } },
-    { data: { id: "op", label: "op" } },
-    { data: { id: "assign", label: "assign" } },
-    { data: { id: "const", label: "const" } },
-    { data: { id: "id", label: "id" } },
-    { data: { id: "const1", label: "const" } },
-    { data: { id: "repeat", label: "repeat" } },
-    { data: { id: "op1", label: "op" } },
-    { data: { source: "assign", target: "repeat" } },
-    { data: { source: "assign", target: "const1" } },   
-    { data: { source: "repeat", target: "op1" } },
-    { data: { source: "read", target: "if" } },
-    { data: { source: "if", target: "op" } },
-    { data: { source: "if", target: "assign" } },
-    { data: { source: "op", target: "id" } },
-    { data: { source: "op", target: "const" } },
-   
-];
-
 
 function Output({ file, type }) {
     return (
@@ -32,14 +11,8 @@ function Output({ file, type }) {
                 output
             </label>
             {type.value === "parser" ? (
-                // <div className="py-2 h[600px] bg-gray-700 rounded-lg border border-gray-800">
-                //     <div className="tree" >
-                //         {treeRendering(treeData)}
-                //     </div>
-                // </div>
-
-                <div className="h-[20rem] rounded-lg ">
-                    <Chart elements={basicElements} />
+                <div className="h-[20rem] rounded-lg bg-gray-50 rounded-lg border border-gray-300  bg-gray-700  border-gray-600 ">
+                    <Chart elements={file} />
                 </div>
             ) : (
                 <div className="py-2.5">
