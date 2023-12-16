@@ -79,8 +79,7 @@ func (p *Parser) ReadStatement() *Node {
 func (p *Parser) WriteStatement() *Node {
 	node := NewNode("write", "write")
 	p.Match("WRITE")
-	node.NodeValue = p.CurrentToken().TokenValue
-	p.Exp()
+	node.AddChild(p.Exp())
 	return &node
 }
 
