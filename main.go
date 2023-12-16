@@ -9,6 +9,8 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 
 	"github.com/ahmedelsayed968/Compilers-Project/internal/Scanner"
+	"github.com/ahmedelsayed968/Compilers-Project/internal/Parser"
+	
 )
 
 var assets embed.FS
@@ -30,6 +32,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 			&(Scanner.Fsm),
+			&(Parser.ParserSingleton),
 		},
 		Windows: &windows.Options{
 			DisableWindowIcon: true,

@@ -10,14 +10,13 @@ type Parser struct {
 	TokenList []Scanner.Token
 }
 
-func NewParser(tokenList []Scanner.Token) *Parser {
-	return &Parser{
-		Pointer:   0,
-		TokenList: tokenList,
-	}
-}
 
-func (p *Parser) Parse() *Node {
+func (p *Parser) Parse(inputString string) *Node {
+	tokenList := Scanner.Fsm.Scan(inputString)
+	p.TokenList = tokenList
+	p.Pointer = 0
 	p.TreeEntry = p.Program()
 	return p.TreeEntry
 }
+
+var ParserSingleton = Parser{}
