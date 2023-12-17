@@ -74,20 +74,18 @@ function Input() {
     let nodeId = 0;
 
     function renderNode(node) {
-        const currentId = `${node.NodeType}_${nodeId++}`;
+        const currentId = `${nodeId++}`;
         const x = [
             {
                 data: {
                     id: currentId,
                     label: node.NodeType + '  ( ' + node.NodeValue + ' )',
                 },
-                position: { x: 0, y: 0 }
             }
         ];
 
         if (node.Next) {
             const nextNodes = renderNode(node.Next);
-            nextNodes[0].position.x = 90,
                 x.push(...(nextNodes));
             x.push({
                 data: {
@@ -101,8 +99,6 @@ function Input() {
         if (node.Children) {
             node.Children.map((child) => {
                 const childNodes = renderNode(child);
-                childNodes[0].position.x = 90,
-                    childNodes[0].position.y = 90,
                     x.push(...(childNodes));
                 x.push({
                     data: {

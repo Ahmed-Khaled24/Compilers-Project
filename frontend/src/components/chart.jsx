@@ -1,22 +1,23 @@
 import React from "react";
-import Cytoscape from "cytoscape";
-import COSEBilkent from "cytoscape-cose-bilkent";
 import CytoscapeComponent from "react-cytoscapejs";
+import cytoscape from 'cytoscape';
+import elk from 'cytoscape-elk';
 
-Cytoscape.use(COSEBilkent);
+cytoscape.use( elk );
 
 export const Chart = (props) => {
     const layout = {
-        name: "cose-bilkent",
-        componentSpacing: 60,
+        name: "elk",
         fit: true,
         padding: 10,
-        edgeElasticity: 2,
+        edgeElasticity: 1,
         height: '800px',
         width: "800px",
-        avoidOverlap: true
-
-
+        avoidOverlap: true,
+        elk: {
+            "elk.direction": "DOWN",
+            "elk.algorithm": "mrtree",
+          },
     };
     const cytoscapeStylesheet = [
         {
@@ -27,7 +28,9 @@ export const Chart = (props) => {
                 minWidth: "60px",
                 height: "label",
                 padding: "16px",
-                shape: "circle"
+                shape: "circle",
+
+
             }
         },
 
@@ -39,11 +42,21 @@ export const Chart = (props) => {
 
             }
         },
+
+        {
+            selector: 'node[id = "0"]',
+            style: {
+                shape: "rectangle",
+                "background-color": "#16A34A",
+                padding: "14px",
+
+            }
+        },
         {
             selector: "node[label]",
             style: {
                 label: "data(label)",
-                "font-size": "12",
+                "font-size": "14",
                 color: "#DDDFE1",
                 "text-halign": "center",
                 "text-valign": "center"
