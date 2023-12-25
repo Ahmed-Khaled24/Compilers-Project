@@ -8,11 +8,11 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 
-	"github.com/ahmedelsayed968/Compilers-Project/internal/Scanner"
 	"github.com/ahmedelsayed968/Compilers-Project/internal/Parser"
-	
+	"github.com/ahmedelsayed968/Compilers-Project/internal/Scanner"
 )
 
+//go:embed frontend/dist
 var assets embed.FS
 
 func main() {
