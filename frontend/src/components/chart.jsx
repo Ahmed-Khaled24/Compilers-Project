@@ -1,23 +1,24 @@
 import React from "react";
 import CytoscapeComponent from "react-cytoscapejs";
 import cytoscape from 'cytoscape';
-import elk from 'cytoscape-elk';
+import dagre from 'cytoscape-dagre';
 
-cytoscape.use( elk );
+cytoscape.use( dagre ); // register extension
+
 
 export const Chart = (props) => {
     const layout = {
-        name: "elk",
+        name: "dagre",
         fit: true,
         padding: 10,
         edgeElasticity: 1,
         height: '800px',
         width: "800px",
+        direction:true,
         avoidOverlap: true,
-        elk: {
-            "elk.direction": "DOWN",
-            "elk.algorithm": "mrtree",
-          },
+        NodeSpacing:3,
+        randomize: false,           
+  
     };
     const cytoscapeStylesheet = [
         {

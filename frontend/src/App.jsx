@@ -44,6 +44,7 @@ function Input() {
         setParserResult("");
         // setScannerResult("No results yet.");
     };
+    const y=[]
     const handleSubmit = async (e) => {
         e.preventDefault();
         let filtered = inputFile.replaceAll(/[\n\r\t]/g, " ");
@@ -57,7 +58,7 @@ function Input() {
             setScannerResult("No results yet.");
         } else {
             console.log(Result);
-            setParserResult(renderNode(Result))
+            setParserResult(renderNode(Result).concat(y))
             const formattedOutput = JSON.stringify(analysis, null, 4);
             setScannerResult(formattedOutput);
         }
@@ -84,23 +85,11 @@ function Input() {
             }
         ];
 
-        if (node.Next) {
-            const nextNodes = renderNode(node.Next);
-                x.push(...(nextNodes));
-            x.push({
-                data: {
-                    source: currentId,
-                    target: nextNodes[0].data.id,
-                    label: 'Next',
-                },
-            });
-        }
-
         if (node.Children) {
             node.Children.map((child) => {
                 const childNodes = renderNode(child);
                     x.push(...(childNodes));
-                x.push({
+                y.push({
                     data: {
                         source: currentId,
                         target: childNodes[0].data.id,
@@ -110,7 +99,27 @@ function Input() {
                 });
             });
         }
-        return x;
+        if (node.Next) {
+            const nextNodes = renderNode(node.Next);
+                x.push(...(nextNodes));
+            y.push({
+                data: {
+                    source: currentId,
+                    target: nextNodes[0].data.id,
+                    label: 'Next',
+                },
+            });
+        }
+
+        let ans=x.filter((value,index) => x.indexOf(value)==index)
+        y.sort((a,b)=>{
+            let x = parseInt(a.data.source);
+            let y = parseInt(b.data.source);
+            if(x>y){return 1;}
+            if(x<y){return -1;}
+            return 0;
+          });
+        return ans;
     }
 
     return (
