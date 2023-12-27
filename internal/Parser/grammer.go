@@ -111,14 +111,32 @@ func (p *Parser) ComparisonOp() *Node {
 }
 
 func (p *Parser) SimpleExp() *Node {
-	factor := *p.Term()
-	node := factor
-	for p.CurrentToken().TokenType == "PLUS" || p.CurrentToken().TokenType == "MINUS" {
-		node = *p.AddOp()
-		node.AddChild(&factor)
-		node.AddChild(p.Term())
-	}
-	return &node
+	factor := p.Term()
+    entry := factor
+    added := false
+    node := factor
+    if p.CurrentToken().TokenType == "PLUS" || p.CurrentToken().TokenType == "MINUS" {
+        node = p.AddOp()
+        p.Pointer--
+    }
+    for p.CurrentToken().TokenType == "PLUS" || p.CurrentToken().TokenType == "MINUS" {
+        p.Pointer++
+        node.AddChild(factor)
+        factor = p.Term()
+        if !added {
+            entry = node
+            added = true
+        }
+        if p.CurrentToken().TokenType == "PLUS" || p.CurrentToken().TokenType == "MINUS" {
+            node.AddChild(p.AddOp())
+            p.Pointer--
+            node = &node.Children[1]
+        } else {
+            node.AddChild(factor)
+        }
+    }
+
+    return entry
 }
 
 func (p *Parser) AddOp() *Node {
@@ -135,14 +153,31 @@ func (p *Parser) AddOp() *Node {
 }
 
 func (p *Parser) Term() *Node {
-	factor := *p.Factor()
-	node := factor
-	for p.CurrentToken().TokenType == "MULT" || p.CurrentToken().TokenType == "DIV" {
-		node = *p.MultOp()
-		node.AddChild(&factor)
-		node.AddChild(p.Factor())
-	}
-	return &node
+	factor := p.Factor()
+    entry := factor
+    added := false
+    node := factor
+    if p.CurrentToken().TokenType == "MULT" || p.CurrentToken().TokenType == "DIV" {
+        node = p.MultOp()
+        p.Pointer--
+    }
+    for p.CurrentToken().TokenType == "MULT" || p.CurrentToken().TokenType == "DIV" {
+        p.Pointer++
+        node.AddChild(factor)
+        factor = p.Factor()
+        if !added {
+            entry = node
+            added = true
+        }
+        if p.CurrentToken().TokenType == "MULT" || p.CurrentToken().TokenType == "DIV" {
+            node.AddChild(p.MultOp())
+            p.Pointer--
+            node = &node.Children[1]
+        } else {
+            node.AddChild(factor)
+        }
+    }
+    return entry
 }
 
 func (p *Parser) MultOp() *Node {
